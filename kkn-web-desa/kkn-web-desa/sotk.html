@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Organisasi Desa Kaliprau - Jasmine Village</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #FDFDFD; /* Warna latar belakang yang konsisten */
+            color: #3C3C3C; /* Warna teks yang konsisten */
+        }
+        /* Warna oranye dari tema Anda */
+        .text-f28500 { color: #F28500; }
+        /* Warna hijau dari tema Anda */
+        .text-65b741 { color: #65B741; }
+
+        /* Custom CSS for Org Chart Nodes and Lines */
+        .org-chart-node {
+            border: 1px solid #d1d5db; /* Gray-300 */
+            border-radius: 0.5rem; /* rounded-lg */
+            background-color: #ffffff; /* bg-white */
+            padding: 1rem; /* p-4 */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow-md */
+            min-width: 180px; /* Increased min-width to accommodate image and text */
+            display: flex; /* Use flexbox for internal layout */
+            align-items: center; /* Vertically align items in the middle */
+            gap: 0.75rem; /* Space between image and text content */
+        }
+
+        .org-chart-node img {
+            width: 50px; /* Fixed width for the profile image */
+            height: 50px; /* Fixed height for the profile image */
+            border-radius: 9999px; /* Makes the image circular (rounded-full) */
+            object-fit: cover; /* Ensures the image covers the area without distortion */
+            flex-shrink: 0; /* Prevents the image from shrinking */
+        }
+
+        .org-chart-node .text-content {
+            text-align: left; /* Aligns text to the left within its container */
+            flex-grow: 1; /* Allows the text content to take up available space */
+        }
+
+        .org-chart-line-v {
+            width: 1px;
+            background-color: #d1d5db;
+            flex-shrink: 0;
+        }
+
+        .org-chart-line-h {
+            height: 1px;
+            background-color: #d1d5db;
+            flex-shrink: 0;
+        }
+
+        /* Specific line connections for the chart */
+        .connector-v-top {
+            width: 1px;
+            height: 20px; /* Length of vertical line */
+            background-color: #d1d5db;
+            margin: 0 auto;
+        }
+        .connector-h {
+            height: 1px;
+            background-color: #d1d5db;
+        }
+        .connector-v-bottom {
+            width: 1px;
+            height: 20px; /* Length of vertical line */
+            background-color: #d1d5db;
+            margin: 0 auto;
+        }
+        /* No longer directly using node-line-bottom/left/top as flexbox handles structure */
+    </style>
+</head>
+<body class="bg-[#FDFDFD] text-[#3C3C3C]">
+
+    <!-- Header / Navigasi -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="images/logo_kaliprau.png" onerror="this.onerror=null; this.src='https://placehold.co/100x40/65B741/ffffff?text=Logo';" alt="Logo Desa Kaliprau" class="h-10">
+                </a>
+                
+                <!-- Menu Navigasi untuk Desktop (Terlihat di layar besar, tersembunyi di layar kecil) -->
+                <nav class="hidden lg:flex items-center space-x-5">
+                    <a href="index.html#profil" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Profil Desa</a>
+                    <a href="index.html#pemerintahan" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Pemerintahan</a>
+                    <a href="index.html#potensi-produk" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Potensi & Produk</a>
+                    <a href="index.html#edukasi" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Edukasi</a>
+                    <a href="index.html#stunting" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Stunting</a>
+                    <a href="https://bumikaliprau.blogspot.com/" target="_blank" rel="noopener noreferrer" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300 flex items-center">
+                        Berita Kaliprau <i data-lucide="arrow-up-right" class="h-4 w-4 ml-1"></i>
+                    </a>
+                </nav>
+
+                <!-- Tombol Menu Mobile (Terlihat di layar kecil, tersembunyi di layar besar) -->
+                <button id="mobile-menu-button" class="lg:hidden text-[#3C3C3C]" aria-label="Toggle mobile menu">
+                    <i data-lucide="menu" class="h-7 w-7"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Menu Mobile (Tersembunyi secara default, akan muncul saat tombol mobile diklik) -->
+        <div id="mobile-menu" class="hidden lg:hidden px-6 pb-4 border-t border-gray-200">
+            <a href="index.html#profil" class="block py-2 text-gray-700 hover:text-[#F28500]">Profil Desa</a>
+            <a href="index.html#pemerintahan" class="block py-2 text-gray-700 hover:text-[#F28500]">Pemerintahan</a>
+            <a href="index.html#potensi-produk" class="block py-2 text-gray-700 hover:text-[#F28500]">Potensi & Produk</a>
+            <a href="index.html#edukasi" class="block py-2 text-gray-700 hover:text-[#F28500]">Edukasi</a>
+            <a href="index.html#stunting" class="block py-2 text-gray-700 hover:text-[#F28500]">Stunting</a>
+            <a href="https://bumikaliprau.blogspot.com/" target="_blank" rel="noopener noreferrer" class="block py-2 text-gray-700 hover:text-[#F28500]">Berita Kaliprau</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Konten Struktur Organisasi -->
+        <section class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-f28500">Struktur Organisasi dan Tata Kerja (SOTK) Desa Kaliprau</h2>
+                
+                <!-- Bagan SOTK -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-8 overflow-x-auto">
+                    <div class="flex flex-col items-center py-8">
+                        <!-- Kepala Desa -->
+                        <div class="org-chart-node">
+                            <img src="sarwono.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/F28500/ffffff?text=KD';" alt="Foto Kepala Desa Sarwono" class="rounded-full">
+                            <div class="text-content">
+                                <h4 class="font-bold text-lg text-65b741">Kepala Desa</h4>
+                                <p class="text-sm text-gray-600">SARWONO</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Garis vertikal dari Kepala Desa ke Sekretaris Desa -->
+                        <div class="connector-v-top h-10"></div>
+
+                        <!-- Sekretaris Desa -->
+                        <div class="org-chart-node">
+                            <img src="rasnoto.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/65B741/ffffff?text=SD';" alt="Foto Sekretaris Desa Rasnoto" class="rounded-full">
+                            <div class="text-content">
+                                <h4 class="font-bold text-lg text-65b741">Sekretaris Desa</h4>
+                                <p class="text-sm text-gray-600">RASNOTO, S.Pd</p>
+                            </div>
+                        </div>
+
+                        <!-- Garis vertikal utama dari Sekretaris Desa ke bawah -->
+                        <div class="connector-v-top h-10"></div>
+                        <div class="org-chart-line-h w-full max-w-xl"></div> <!-- Horizontal line for branching -->
+                        <div class="connector-v-bottom h-10"></div>
+
+                        <!-- Baris Kaur dan Kasi -->
+                        <div class="flex justify-center w-full mt-4 flex-wrap gap-8">
+                            <!-- Kolom Kepala Urusan -->
+                            <div class="flex flex-col items-center">
+                                <div class="org-chart-node">
+                                    <img src="dwi.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/F28500/ffffff?text=KU1';" alt="Foto Kaur Tata Usaha & Umum Dwi Septianasari" class="rounded-full">
+                                    <div class="text-content">
+                                        <h4 class="font-bold text-base text-65b741">Kepala Urusan</h4>
+                                        <p class="text-sm text-gray-600">Tata Usaha & Umum</p>
+                                        <p class="text-xs text-gray-500">DWI SEPTIANASARI</p>
+                                    </div>
+                                </div>
+                                <div class="connector-v-top h-10"></div>
+                                <div class="org-chart-node">
+                                    <img src="tasdik.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/65B741/ffffff?text=KU2';" alt="Foto Kaur Keuangan Tasdik" class="rounded-full">
+                                    <div class="text-content">
+                                        <h4 class="font-bold text-base text-65b741">Kepala Urusan</h4>
+                                        <p class="text-sm text-gray-600">Keuangan</p>
+                                        <p class="text-xs text-gray-500">TASDIK</p>
+                                    </div>
+                                </div>
+                                <div class="connector-v-top h-10"></div>
+                                <div class="org-chart-node">
+                                    <img src="ruro.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/F28500/ffffff?text=KU3';" alt="Foto Kaur Perencanaan Ruro" class="rounded-full">
+                                    <div class="text-content">
+                                        <h4 class="font-bold text-base text-65b741">Kepala Urusan</h4>
+                                        <p class="text-sm text-gray-600">Perencanaan</p>
+                                        <p class="text-xs text-gray-500">RURO</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Kolom Kepala Seksi dan Kepala Dusun -->
+                            <div class="flex flex-col items-center">
+                                <div class="org-chart-node">
+                                    <img src="agus.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/65B741/ffffff?text=KS1';" alt="Foto Kasi Pemerintahan Agus Widodo" class="rounded-full">
+                                    <div class="text-content">
+                                        <h4 class="font-bold text-base text-65b741">Kepala Seksi</h4>
+                                        <p class="text-sm text-gray-600">Pemerintahan</p>
+                                        <p class="text-xs text-gray-500">AGUS WIDODO</p>
+                                    </div>
+                                </div>
+                                <!-- Garis vertikal ke Kepala Dusun dari Kasi Pemerintahan -->
+                                <div class="connector-v-top h-10"></div>
+                                <div class="flex w-full justify-center gap-4 flex-wrap">
+                                    <div class="org-chart-node">
+                                        <img src="supriyanto.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/F28500/ffffff?text=KD1';" alt="Foto Kepala Dusun I Supriyanto" class="rounded-full">
+                                        <div class="text-content">
+                                            <h4 class="font-bold text-base text-65b741">Kepala Dusun I</h4>
+                                            <p class="text-sm text-gray-600">SUPRIYANTO</p>
+                                        </div>
+                                    </div>
+                                    <div class="org-chart-node">
+                                        <img src="purwadi.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/65B741/ffffff?text=KD2';" alt="Foto Kepala Dusun II Purwadi" class="rounded-full">
+                                        <div class="text-content">
+                                            <h4 class="font-bold text-base text-65b741">Kepala Dusun II</h4>
+                                            <p class="text-sm text-gray-600">PURWADI</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="connector-v-top h-10 mt-4"></div> <!-- Spacer for next Kasi -->
+                                <div class="org-chart-node">
+                                    <img src="dukhaeri.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/F28500/ffffff?text=KS2';" alt="Foto Kasi Kesejahteraan Dukhaeri" class="rounded-full">
+                                    <div class="text-content">
+                                        <h4 class="font-bold text-base text-65b741">Kepala Seksi</h4>
+                                        <p class="text-sm text-gray-600">Kesejahteraan</p>
+                                        <p class="text-xs text-gray-500">DUKHAERI</p>
+                                    </div>
+                                </div>
+                                <div class="connector-v-top h-10"></div>
+                                <div class="org-chart-node">
+                                    <img src="daroni.jpg" onerror="this.onerror=null; this.src='https://placehold.co/50x50/65B741/ffffff?text=KS3';" alt="Foto Kasi Pelayanan Daroni" class="rounded-full">
+                                    <div class="text-content">
+                                        <h4 class="font-bold text-base text-65b741">Kepala Seksi</h4>
+                                        <p class="text-sm text-gray-600">Pelayanan</p>
+                                        <p class="text-xs text-gray-500">DARONI</p>
+                                    </div>
+                                </div>
+                                <!-- Garis vertikal untuk Kadus dari Kasi Pelayanan -->
+                                <div class="connector-v-top h-10"></div>
+                                <div class="org-chart-node">
+                                    <img src="https://placehold.co/50x50/F28500/ffffff?text=KD3" onerror="this.onerror=null; this.src='https://placehold.co/50x50/F28500/ffffff?text=KD3';" alt="Foto Kepala Dusun III" class="rounded-full">
+                                    <div class="text-content">
+                                        <h4 class="font-bold text-base text-65b741">Kepala Dusun III</h4>
+                                        <p class="text-sm text-gray-600">Nama Kadus III</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-65b741">Tugas dan Fungsi Masing-masing Jabatan</h3>
+                <div class="text-gray-700 leading-relaxed">
+                    <p class="mb-4">
+                        Struktur Organisasi dan Tata Kerja (SOTK) Desa Kaliprau dirancang untuk memastikan efektivitas dan efisiensi dalam pelaksanaan tugas pemerintahan, pembangunan, pembinaan kemasyarakatan, dan pemberdayaan masyarakat desa. Berikut adalah rincian tugas dan fungsi dari setiap jabatan:
+                    </p>
+                    <ul class="list-disc list-inside space-y-3 ml-4">
+                        <li>
+                            <strong>Kepala Desa:</strong>
+                            <p>Sebagai kepala pemerintahan desa, bertanggung jawab penuh atas penyelenggaraan pemerintahan desa, pelaksanaan pembangunan, pembinaan kemasyarakatan, dan pemberdayaan masyarakat. Memimpin dan mengkoordinasikan seluruh perangkat desa.</p>
+                        </li>
+                        <li>
+                            <strong>Sekretaris Desa:</strong>
+                            <p>Membantu Kepala Desa dalam bidang administrasi pemerintahan desa, memberikan pelayanan teknis administrasi kepada seluruh perangkat desa, serta mengelola urusan umum, kepegawaian, dan keuangan desa.</p>
+                            <ul class="list-circle list-inside ml-6 mt-2">
+                                <li><strong>Kepala Urusan Tata Usaha dan Umum:</strong> Mengelola surat-menyurat, arsip, dan administrasi umum.</li>
+                                <li><strong>Kepala Urusan Keuangan:</strong> Mengelola administrasi keuangan, termasuk penyusunan APBDes dan pelaporan.</li>
+                                <li><strong>Kepala Urusan Perencanaan:</strong> Menyusun rencana pembangunan desa dan mengelola data desa.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Kepala Seksi:</strong>
+                            <p>Melaksanakan tugas-tugas operasional sesuai bidangnya masing-masing.</p>
+                            <ul class="list-circle list-inside ml-6 mt-2">
+                                <li><strong>Kepala Seksi Pemerintahan:</strong> Menangani urusan administrasi kependudukan, tata pemerintahan, dan fasilitasi pemilihan umum.</li>
+                                <li><strong>Kepala Seksi Kesejahteraan:</strong> Mengelola program-program kesejahteraan sosial, kesehatan, dan pendidikan.</li>
+                                <li><strong>Kepala Seksi Pelayanan:</strong> Bertanggung jawab atas pelayanan umum kepada masyarakat, termasuk perizinan.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Kepala Dusun (Kadus):</strong>
+                            <p>Membantu Kepala Desa dalam pelaksanaan tugas di wilayah dusun masing-masing. Bertanggung jawab atas pembinaan kemasyarakatan, ketenteraman, dan ketertiban di wilayahnya, serta menjadi penghubung antara pemerintah desa dan masyarakat dusun.</p>
+                        </li>
+                    </ul>
+                    <p class="mt-4">
+                        Setiap elemen dalam SOTK ini bekerja secara sinergis untuk mewujudkan Desa Kaliprau yang maju, sejahtera, dan berbudaya.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="kontak" class="bg-[#3C3C3C] text-white">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Desa Kaliprau</h3>
+                    <p class="text-gray-300">Jasmine Village<br>Kecamatan Ulujami, Kabupaten Pemalang<br>Jawa Tengah</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Tautan Penting</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html#profil" class="text-gray-300 hover:text-white">Profil Desa</a></li>
+                        <li><a href="index.html#pemerintahan" class="text-gray-300 hover:text-white">Pemerintahan</a></li>
+                        <li><a href="index.html#potensi-produk" class="text-gray-300 hover:text-white">Potensi & Produk</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Ikuti Kami</h3>
+                    <div class="flex justify-center md:justify-start space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="instagram" class="h-6 w-6"></i></a>
+                        <a href="https://www.facebook.com/desakaliprau/?locale=id_ID" target="_blank" class="text-gray-300 hover:text-white"><i data-lucide="facebook" class="h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="youtube" class="h-6 w-6"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Desa Kaliprau. Didukung oleh Tim KKN Undip.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Inisialisasi Lucide Icons
+        lucide.createIcons();
+
+        // Fungsionalitas untuk Menu Mobile
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

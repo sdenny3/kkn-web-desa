@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demografi Desa Kaliprau - Jasmine Village</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #FDFDFD; /* Warna latar belakang yang konsisten */
+            color: #3C3C3C; /* Warna teks yang konsisten */
+        }
+        /* Warna oranye dari tema Anda */
+        .text-f28500 { color: #F28500; }
+        /* Warna hijau dari tema Anda */
+        .text-65b741 { color: #65B741; }
+
+        /* Custom styles for demography charts to match theme */
+        .main-content-demografi {
+            padding-top: 80px; /* Space for fixed header */
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+        }
+
+        .charts-container {
+            display: flex;
+            flex-wrap: wrap; /* Allow charts to wrap to the next line */
+            gap: 20px;
+            padding-bottom: 20px; /* Space for scrollbar */
+            justify-content: center; /* Center charts horizontally */
+            align-items: flex-start; /* Align items to the start of the cross axis */
+        }
+
+        .chart-card {
+            background-color: #ffffff; /* bg-white */
+            border-radius: 0.75rem; /* rounded-lg */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* shadow-lg */
+            padding: 1.5rem; /* p-6 */
+            flex: 0 0 auto; /* Prevent shrinking/growing */
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            transition: transform 0.3s ease;
+            
+            /* Set width for 2 columns on larger screens */
+            width: calc(50% - 10px); /* 50% width minus half of the gap (20px / 2 = 10px) */
+            max-width: 95%; /* Ensures it doesn't overflow on very small screens */
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .chart-card h2 {
+            margin: 0 0 20px 0;
+            text-align: center;
+            color: #F28500; /* Primary orange from your theme */
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .chart-container-canvas {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px; /* Minimum height for chart canvas */
+        }
+
+        /* Toggle Button for Jobs Legend */
+        .toggle-legend-btn {
+            background-color: #65B741; /* Green from your theme */
+            color: #ffffff; /* White text */
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 15px auto 0 auto;
+            display: block;
+        }
+        .toggle-legend-btn:hover {
+            opacity: 0.9;
+        }
+        #job-legend {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding-right: 10px;
+            display: none; /* Initially hidden */
+            font-size: 0.9em;
+            color: #3C3C3C; /* Consistent text color */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .main-content-demografi {
+                overflow-x: hidden; /* Prevent horizontal scroll on body */
+            }
+            .charts-container {
+                flex-direction: column; /* Stack vertically on smaller screens */
+                align-items: center;
+            }
+            .chart-card {
+                width: 95%; /* Take full width on small screens */
+                max-width: 500px; /* Limit max width for readability on very wide phones */
+                margin-bottom: 20px;
+            }
+            .chart-container-canvas {
+                min-height: 300px; /* Adjust minimum height for mobile if needed */
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#FDFDFD] text-[#3C3C3C]">
+
+    <!-- Header / Navigasi (Disalin dari index.html) -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="images/logo_kaliprau.png" onerror="this.onerror=null; this.src='https://placehold.co/100x40/65B741/ffffff?text=Logo';" alt="Logo Desa Kaliprau" class="h-10">
+                </a>
+                
+                <!-- Menu Navigasi untuk Desktop -->
+                <nav class="hidden lg:flex items-center space-x-5">
+                    <a href="index.html#profil" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Profil Desa</a>
+                    <a href="index.html#pemerintahan" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Pemerintahan</a>
+                    <a href="index.html#potensi-produk" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Potensi & Produk</a>
+                    <a href="index.html#edukasi" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Edukasi</a>
+                    <a href="index.html#stunting" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Stunting</a>
+                    <a href="https://bumikaliprau.blogspot.com/" target="_blank" rel="noopener noreferrer" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300 flex items-center">
+                        Berita Kaliprau <i data-lucide="arrow-up-right" class="h-4 w-4 ml-1"></i>
+                    </a>
+                </nav>
+
+                <!-- Tombol Menu Mobile -->
+                <button id="mobile-menu-button" class="lg:hidden text-[#3C3C3C]" aria-label="Toggle mobile menu">
+                    <i data-lucide="menu" class="h-7 w-7"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Menu Mobile (Tersembunyi secara default) -->
+        <div id="mobile-menu" class="hidden lg:hidden px-6 pb-4 border-t border-gray-200">
+            <a href="index.html#profil" class="block py-2 text-gray-700 hover:text-[#F28500]">Profil Desa</a>
+            <a href="index.html#pemerintahan" class="block py-2 text-gray-700 hover:text-[#F28500]">Pemerintahan</a>
+            <a href="index.html#potensi-produk" class="block py-2 text-gray-700 hover:text-[#F28500]">Potensi & Produk</a>
+            <a href="index.html#edukasi" class="block py-2 text-gray-700 hover:text-[#F28500]">Edukasi</a>
+            <a href="index.html#stunting" class="block py-2 text-gray-700 hover:text-[#F28500]">Stunting</a>
+            <a href="https://bumikaliprau.blogspot.com/" target="_blank" rel="noopener noreferrer" class="block py-2 text-gray-700 hover:text-[#F28500]">Berita Kaliprau</a>
+        </div>
+    </header>
+
+    <main class="main-content-demografi">
+        <section class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="relative flex items-center justify-center mb-8"> <!-- Flex container for back button and title -->
+                    <a href="index.html" class="absolute left-0 flex items-center space-x-2 text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">
+                        <i data-lucide="arrow-left" class="h-6 w-6"></i>
+                        <span class="font-semibold text-lg">Kembali</span>
+                    </a>
+                    <h1 class="text-3xl md:text-4xl font-bold text-center text-f28500 flex-grow">Dashboard Data Penduduk Kaliprau</h1>
+                </div>
+                <p class="text-lg text-[#3C3C3C] text-center mb-12 max-w-3xl mx-auto">
+                    Visualisasi data demografi Desa Kaliprau untuk memberikan gambaran lengkap tentang komposisi penduduk, status perkawinan, jenis pekerjaan, dan piramida penduduk.
+                </p>
+
+                <div class="charts-container">
+                    <div class="chart-card gender">
+                        <h2>Komposisi Gender</h2>
+                        <div class="chart-container-canvas">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card marriage">
+                        <h2>Status Perkawinan</h2>
+                        <div class="chart-container-canvas">
+                            <canvas id="maritalStatusChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card jobs">
+                        <h2>Jenis Pekerjaan</h2>
+                        <div class="chart-container-canvas">
+                            <canvas id="jobChart"></canvas>
+                        </div>
+                        <button id="toggleJobLegend" class="toggle-legend-btn">Tampilkan/Sembunyikan Detail</button>
+                        <div id="job-legend"></div>
+                    </div>
+
+                    <div class="chart-card pyramid">
+                        <h2>Piramida Penduduk</h2>
+                        <div class="chart-container-canvas">
+                            <canvas id="populationPyramid"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer (Disalin dari index.html) -->
+    <footer id="kontak" class="bg-[#3C3C3C] text-white">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Desa Kaliprau</h3>
+                    <p class="text-gray-300">Jasmine Village<br>Kecamatan Ulujami, Kabupaten Pemalang<br>Jawa Tengah</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Tautan Penting</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html#profil" class="text-gray-300 hover:text-white">Profil Desa</a></li>
+                        <li><a href="index.html#pemerintahan" class="text-gray-300 hover:text-white">Pemerintahan</a></li>
+                        <li><a href="index.html#potensi-produk" class="text-gray-300 hover:text-white">Potensi & Produk</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Ikuti Kami</h3>
+                    <div class="flex justify-center md:justify-start space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="instagram" class="h-6 w-6"></i></a>
+                        <a href="https://www.facebook.com/desakaliprau/?locale=id_ID" target="_blank" class="text-gray-300 hover:text-white"><i data-lucide="facebook" class="h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="youtube" class="h-6 w-6"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Desa Kaliprau. Didukung oleh Tim KKN Undip.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Inisialisasi Lucide Icons
+        lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fungsionalitas untuk Menu Mobile
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Data diolah dari file CSV Anda
+            const genderData = { "L": 4429, "P": 4292 };
+            const maritalStatusData = { "BELUM KAWIN": 3908, "KAWIN": 4341, "CERAI HIDUP": 131, "CERAI MATI": 341 };
+            const jobData = { "BELUM/TIDAK BEKERJA": 1951, "MENGURUS RUMAH TANGGA": 1626, "WIRASWASTA": 1617, "PELAJAR/MAHASISWA": 1332, "PETANI/PEKEBUN": 1122, "BURUH TANI/PERKEBUNAN": 200, "TUKANG JAHIT": 189, "BURUH HARIAN LEPAS": 168, "PEDAGANG": 158, "KARYAWAN SWASTA": 139, "PERDAGANGAN": 53, "GURU": 37, "PEGAWAI NEGERI SIPIL": 30, "NELAYAN/PERIKANAN": 23, "PERANGKAT DESA": 14, "PENSIUNAN": 7, "INDUSTRI": 7, "BURUH NELAYAN/PERIKANAN": 6, "PERAWAT": 6, "KARYAWAN HONORER": 4, "SOPIR": 3, "BIDAN": 3, "BURUH PETERNAKAN": 3, "PELAUT": 3, "TRANSPORTASI": 2, "TENTARA NASIONAL INDONESIA": 2, "TUKANG KAYU": 2, "PETERNAK": 2, "APOTEKER": 1, "TUKANG CUKUR": 1, "KONSTRUKSI": 1, "TUKANG GIGI": 1, "TUKANG BATU": 1, "KONSULTAN": 1, "TUKANG LAS/PANDAI BESI": 1, "KARYAWAN BUMN": 1, "PEMBANTU RUMAH TANGGA": 1};
+            const populationPyramidData = {
+                labels: ["0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75+"],
+                male: [-23, -344, -380, -344, -352, -369, -404, -378, -374, -314, -255, -236, -177, -149, -138, -192],
+                female: [8, 329, 348, 335, 357, 353, 374, 349, 356, 315, 250, 223, 186, 178, 135, 196]
+            };
+            const colorPalette = {
+                primaryOrange: '#F28500',
+                primaryGreen: '#65B741',
+                darkText: '#3C3C3C',
+                lightBg: '#FDFDFD',
+                cardBg: '#ffffff',
+                chartBlue: '#4682B4',
+                chartLightGreen: '#50A888',
+                chartGold: '#FFD700',
+                chartLightBlue: '#A0C4E4'
+            };
+
+            // Utility function for percentages in tooltips
+            const getTooltipPercentageCharts = (context) => {
+                const dataset = context.dataset;
+                const value = context.raw;
+
+                const total = dataset.data.reduce((sum, val) => sum + Math.abs(val), 0);
+                const percentage = ((Math.abs(value) / total) * 100).toFixed(1);
+
+                return `${context.label}: ${Math.abs(value)} (${percentage}%)`;
+            };
+            
+            const genderCtx = document.getElementById('genderChart');
+            if (genderCtx) {
+                new Chart(genderCtx.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: ['Laki-laki', 'Perempuan'],
+                        datasets: [{
+                            data: Object.values(genderData),
+                            backgroundColor: [colorPalette.primaryOrange, colorPalette.primaryGreen], /* Diubah ke warna logo */
+                            borderColor: colorPalette.cardBg,
+                            borderWidth: 3,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { font: { size: 14 } }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: getTooltipPercentageCharts
+                                }
+                            },
+                            datalabels: {
+                                formatter: (value, ctx) => {
+                                    let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    let percentage = (value * 100 / sum).toFixed(1) + "%";
+                                    return percentage;
+                                },
+                                color: '#fff',
+                                font: { weight: 'bold', size: 14 }
+                            }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+            }
+
+            const maritalCtx = document.getElementById('maritalStatusChart');
+            if (maritalCtx) {
+                new Chart(maritalCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(maritalStatusData),
+                        datasets: [{
+                            data: Object.values(maritalStatusData),
+                            backgroundColor: [colorPalette.primaryGreen, colorPalette.primaryOrange, colorPalette.chartBlue, colorPalette.chartLightGreen],
+                            borderColor: colorPalette.cardBg,
+                            borderWidth: 3,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { font: { size: 14 } }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: getTooltipPercentageCharts
+                                }
+                            },
+                            datalabels: {
+                                formatter: (value, ctx) => {
+                                     let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    let percentage = (value * 100 / sum).toFixed(1) + "%";
+                                    return percentage;
+                                },
+                                color: colorPalette.darkText,
+                                font: { weight: 'bold', size: 12 }
+                            }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+            }
+            
+            const jobCtx = document.getElementById('jobChart');
+            if (jobCtx) {
+                const jobChart = new Chart(jobCtx.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(jobData),
+                        datasets: [{
+                            data: Object.values(jobData),
+                            backgroundColor: Object.keys(jobData).map((_, i) => `hsl(${i * 25 % 360}, 60%, 55%)`),
+                            borderColor: colorPalette.cardBg,
+                            borderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false // Hide default legend
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: getTooltipPercentageCharts
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const toggleBtn = document.getElementById('toggleJobLegend');
+                const legendContainer = document.getElementById('job-legend');
+                if (toggleBtn && legendContainer) {
+                    const legendHtml = jobChart.data.labels
+                        .map((label, index) => {
+                            const backgroundColor = jobChart.data.datasets[0].backgroundColor[index];
+                            const value = jobChart.data.datasets[0].data[index];
+                            return `
+                            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <div style="width: 20px; height: 20px; background-color: ${backgroundColor}; margin-right: 10px; border-radius: 3px;"></div>
+                                <span>${label} (${value})</span>
+                            </div>
+                        `}).join('');
+                    legendContainer.innerHTML = legendHtml;
+
+                    toggleBtn.addEventListener('click', () => {
+                        const isHidden = legendContainer.style.display === 'none';
+                        legendContainer.style.display = isHidden ? 'block' : 'none';
+                    });
+                }
+            }
+
+            const pyramidCtx = document.getElementById('populationPyramid');
+            if (pyramidCtx) {
+                new Chart(pyramidCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: populationPyramidData.labels,
+                        datasets: [
+                            {
+                                label: 'Laki-laki',
+                                data: populationPyramidData.male,
+                                backgroundColor: colorPalette.primaryOrange, /* Diubah ke warna logo */
+                                borderColor: colorPalette.primaryOrange, /* Diubah ke warna logo */
+                                borderWidth: 1,
+                            },
+                            {
+                                label: 'Perempuan',
+                                data: populationPyramidData.female,
+                                backgroundColor: colorPalette.primaryGreen, /* Diubah ke warna logo */
+                                borderColor: colorPalette.primaryGreen, /* Diubah ke warna logo */
+                                borderWidth: 1,
+                            }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y', // Horizontal bars
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                stacked: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return Math.abs(value); // Show positive numbers on axis
+                                    },
+                                    color: colorPalette.darkText // Axis text color
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Jumlah Penduduk',
+                                    color: colorPalette.darkText // Axis title color
+                                },
+                                grid: {
+                                    color: '#e5e7eb' // Light gray grid lines
+                                }
+                            },
+                            y: {
+                                stacked: true,
+                                ticks: {
+                                    color: colorPalette.darkText // Axis text color
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Kelompok Usia',
+                                    color: colorPalette.darkText // Axis title color
+                                },
+                                grid: {
+                                    color: '#e5e7eb' // Light gray grid lines
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        return `${context.dataset.label}: ${Math.abs(value)}`;
+                                    }
+                                }
+                            },
+                            legend: {
+                                position: 'bottom',
+                                labels: { font: { size: 14 }, color: colorPalette.darkText } // Legend text color
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

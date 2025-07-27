@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desa Kaliprau - Jasmine Village</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <style>
+        /* Menggunakan font Poppins sebagai default */
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Efek Gradasi untuk Hero Section */
+        .hero-gradient {
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%);
+        }
+        /* Kustomisasi untuk Swiper.js di Hero Section */
+        .hero-swiper .swiper-button-next,
+        .hero-swiper .swiper-button-prev {
+            color: #FFFFFF;
+        }
+        .hero-swiper .swiper-pagination-bullet-active {
+            background-color: #FFFFFF;
+        }
+
+        /* Warna oranye dari tema Anda */
+        .text-f28500 { color: #F28500; }
+        /* Warna hijau dari tema Anda */
+        .text-65b741 { color: #65B741; }
+
+        /* Gaya untuk Modal Pop-up */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            z-index: 1001;
+        }
+        /* Gaya tambahan untuk gradasi di pop-up jumlah penduduk */
+        .gradient-green-dark {
+            background: linear-gradient(90deg, #65B741, #50A888); /* Dari hijau utama ke hijau sedikit lebih gelap */
+        }
+        /* Gaya tambahan untuk gradasi di pop-up luas wilayah */
+        .gradient-orange-light {
+            background: linear-gradient(90deg, #F28500, #FFB347); /* Dari oranye utama ke oranye sedikit lebih terang */
+        }
+        /* Gaya tambahan untuk gradasi di pop-up RT/RW */
+        .gradient-blue-dark {
+            background: linear-gradient(90deg, #4682B4, #3A6690); /* Dari biru ke biru sedikit lebih gelap */
+        }
+    </style>
+</head>
+<body class="bg-[#FDFDFD] text-[#3C3C3C]">
+
+    <!-- Header / Navigasi -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="#" class="flex items-center space-x-2">
+                    <img src="images/logo_kaliprau.png" onerror="this.onerror=null; this.src='https://placehold.co/100x40/65B741/ffffff?text=Logo';" alt="Logo Desa Kaliprau" class="h-10">
+                </a>
+                
+                <!-- Menu Navigasi untuk Desktop -->
+                <nav class="hidden lg:flex items-center space-x-5">
+                    <a href="#profil" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Profil Desa</a>
+                    <a href="#pemerintahan" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Pemerintahan</a>
+                    <a href="#potensi-produk" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Potensi & Produk</a>
+                    <a href="#edukasi" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Edukasi</a>
+                    <a href="#stunting" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300">Stunting</a>
+                    <a href="https://bumikaliprau.blogspot.com/" target="_blank" rel="noopener noreferrer" class="text-sm text-[#3C3C3C] hover:text-[#F28500] transition-colors duration-300 flex items-center">
+                        Berita Kaliprau <i data-lucide="arrow-up-right" class="h-4 w-4 ml-1"></i>
+                    </a>
+                </nav>
+
+                <!-- Tombol Menu Mobile -->
+                <button id="mobile-menu-button" class="lg:hidden text-[#3C3C3C]" aria-label="Toggle mobile menu">
+                    <i data-lucide="menu" class="h-7 w-7"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Menu Mobile (Tersembunyi secara default) -->
+        <div id="mobile-menu" class="hidden lg:hidden px-6 pb-4 border-t border-gray-200">
+            <a href="#profil" class="block py-2 text-gray-700 hover:text-[#F28500]">Profil Desa</a>
+            <a href="#pemerintahan" class="block py-2 text-gray-700 hover:text-[#F28500]">Pemerintahan</a>
+            <a href="#potensi-produk" class="block py-2 text-gray-700 hover:text-[#F28500]">Potensi & Produk</a>
+            <a href="#edukasi" class="block py-2 text-gray-700 hover:text-[#F28500]">Edukasi</a>
+            <a href="#stunting" class="block py-2 text-gray-700 hover:text-[#F28500]">Stunting</a>
+            <a href="https://bumikaliprau.blogspot.com/" target="_blank" rel="noopener noreferrer" class="block py-2 text-gray-700 hover:text-[#F28500]">Berita Kaliprau</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section with Slider -->
+        <section id="profil" class="relative h-[85vh] text-white">
+            <!-- Swiper container for background images -->
+            <div class="swiper-container hero-swiper absolute inset-0 w-full h-full">
+                <div class="swiper-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide bg-cover bg-center" style="background-image: url('https://assets-a1.kompasiana.com/items/album/2020/02/10/kaliprau-5e40ebf2d541df0d89512d12.jpg?t=o&v=770');"></div>
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/65B741/ffffff?text=Hutan+Mangrove');"></div>
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/F28500/ffffff?text=Perkebunan+Melati');"></div>
+                </div>
+                <!-- Navigation Buttons -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <!-- Pagination -->
+                <div class="swiper-pagination"></div>
+            </div>
+            
+            <!-- Overlay and text content -->
+            <div class="absolute inset-0 hero-gradient"></div>
+            <div class="relative h-full flex items-end z-10">
+                <div class="container mx-auto px-6 pb-16 text-center">
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-xl" style="color: #FDFDFD;">
+                        Selamat Datang di Kaliprau
+                    </h1>
+                    <p class="text-lg md:text-xl max-w-3xl mx-auto drop-shadow-lg">
+                        Temukan keindahan alam, kekayaan budaya, dan kehangatan "Jasmine Village".
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profil Umum Section -->
+        <section id="profil" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <!-- Kolom Kiri: Informasi Teks -->
+                    <div class="lg:w-1/2">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#F28500] mb-4">Profil Umum Desa</h2>
+                        <p class="text-gray-600 mb-8">Desa Kaliprau merupakan salah satu desa pesisir di Kecamatan Ulujami yang dikenal sebagai "Jasmine Village" karena potensi bunga melatinya. Desa ini memiliki kekayaan alam berupa tambak dan hutan mangrove yang menjadi penopang ekonomi warganya.</p>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <i data-lucide="map-pin" class="h-8 w-8 text-[#65B741] mb-2"></i>
+                                <h4 class="font-bold text-lg">Lokasi</h4>
+                                <p class="text-gray-600">Kec. Ulujami, Kab. Pemalang</p>
+                            </div>
+                            <div id="luas-wilayah-card" class="bg-gray-50 p-4 rounded-lg cursor-pointer hover:shadow-md transition-shadow duration-300">
+                                <i data-lucide="ruler" class="h-8 w-8 text-[#65B741] mb-2"></i>
+                                <h4 class="font-bold text-lg">Luas Wilayah</h4>
+                                <p class="text-gray-600">631,66 ha</p>
+                            </div>
+                            <div id="jumlah-penduduk-card" class="bg-gray-50 p-4 rounded-lg cursor-pointer hover:shadow-md transition-shadow duration-300">
+                                <i data-lucide="users" class="h-8 w-8 text-[#65B741] mb-2"></i>
+                                <h4 class="font-bold text-lg">Jumlah Penduduk</h4>
+                                <p class="text-gray-600">± 8.200 Jiwa</p>
+                            </div>
+                            <div id="rt-rw-card" class="bg-gray-50 p-4 rounded-lg cursor-pointer hover:shadow-md transition-shadow duration-300">
+                                <i data-lucide="home" class="h-8 w-8 text-[#65B741] mb-2"></i>
+                                <h4 class="font-bold text-lg">RT / RW</h4>
+                                <p class="text-gray-600">32 RT / 6 RW</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Kolom Kanan: Peta Wilayah -->
+                    <div class="lg:w-1/2 w-full">
+                        <div class="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg">
+                           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15846.54147779917!2d109.52906485!3d-6.814321499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6fd50444911165%3A0x5027a76e3565a30!2sKaliprau%2C%20Kec.%20Ulujami%2C%20Kabupaten%20Pemalang%2C%20Jawa%20Tengah!5e0!3m2!1sid!2sid!4v1721474831868!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-full h-full"></iframe>
+                        </div>
+                        <!-- Bagian Demografi di bawah peta -->
+                        <div class="mt-8 text-center lg:text-left lg:pl-4">
+                            <h3 class="text-xl font-bold text-[#F28500] mb-2">Demografi Desa Kaliprau</h3>
+                            <p class="text-gray-600 text-sm mb-4">
+                                Visualisasi data komposisi penduduk, status perkawinan, jenis pekerjaan, dan piramida penduduk.
+                            </p>
+                            <a href="demografi.html" class="inline-block bg-[#65B741] text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-opacity-90 transition-all duration-300">
+                                Lihat Data Demografi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pemerintahan & Keuangan Section -->
+        <section id="pemerintahan" class="py-20 bg-[#F5F5DC]">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#F28500]">Pemerintahan Desa</h2>
+                    <p class="text-lg text-[#3C3C3C] mt-2">Transparansi informasi pemerintahan dan keuangan Desa Kaliprau.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Card Struktur Organisasi - Diubah untuk tautan langsung -->
+                    <a href="sotk.html" class="block bg-white p-6 rounded-lg shadow-md text-center cursor-pointer hover:shadow-xl transition-shadow duration-300">
+                        <i data-lucide="users-2" class="h-12 w-12 mx-auto text-[#65B741]"></i>
+                        <h3 class="text-xl font-bold mt-4">Struktur Organisasi</h3>
+                        <p class="text-gray-600 mt-2">Bagan, tugas, dan tanggung jawab perangkat desa.</p>
+                        <p class="text-sm text-gray-400 mt-4">Oleh: Elisa</p>
+                    </a>
+                    <!-- Card Keuangan Desa -->
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <i data-lucide="file-pie-chart" class="h-12 w-12 mx-auto text-[#65B741]"></i>
+                        <h3 class="text-xl font-bold mt-4">Keuangan Desa</h3>
+                        <p class="text-gray-600 mt-2">APBD Desa, Realisasi APBDes, Penerimaan PBB</p>
+                        <p class="text-sm text-gray-400 mt-4">Oleh: Natasya, Marista, Rara</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Potensi Desa Section -->
+        <section id="potensi-desa" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#F28500]">Potensi Desa</h2>
+                    <p class="text-lg text-[#3C3C3C] mt-2">Menggali kekayaan alam dan budaya Desa Kaliprau.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"><div class="p-6 flex-grow"><span class="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Sumber Daya Alam</span><h3 class="text-xl font-bold mt-4">Potensi SDA Desa Kaliprau</h3><p class="text-gray-600 mt-2">Poster informatif mengenai kekayaan sumber daya alam yang dimiliki desa.</p></div><div class="p-6 bg-gray-50 border-t"><p class="text-sm text-gray-500 mb-4">Oleh: Netta dan Fara</p><a href="#" class="w-full text-center block bg-[#65B741] text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">Lihat Karya</a></div></div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"><div class="p-6 flex-grow"><span class="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Budaya</span><h3 class="text-xl font-bold mt-4">Menggali Kearifan Budaya Kaliprau</h3><p class="text-gray-600 mt-2">Dokumentasi visual dan narasi mengenai tradisi dan budaya lokal.</p></div><div class="p-6 bg-gray-50 border-t"><p class="text-sm text-gray-500 mb-4">Oleh: Cahya dan Xrij Dianita</p><a href="#" target="_blank" class="w-full text-center block bg-[#65B741] text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">Lihat Karya</a></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Produk Desa Section -->
+        <section id="produk-desa" class="py-20 bg-[#F5F5DC]">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#F28500]">Produk Unggulan Desa</h2>
+                    <p class="text-lg text-[#3C3C3C] mt-2">Kreativitas dan hasil karya UMKM Desa Kaliprau.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"><div class="p-6 flex-grow"><span class="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">UMKM</span><h3 class="text-xl font-bold mt-4">Produk Khas Kaliprau</h3><p class="text-gray-600 mt-2">Foto dan deskripsi produk-produk unggulan asli dari Kaliprau.</p></div><div class="p-6 bg-gray-50 border-t"><p class="text-sm text-gray-500 mb-4">Oleh: Arul dan Abdul Hafizh</p><a href="https://docs.google.com/document/d/1aeI_1eOEY1Q9XzrvHQ-4IQaWBJ0-Clz2_nG2EXhc5PI/edit?usp=sharing" target="_blank" class="w-full text-center block bg-[#65B741] text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">Lihat Karya</a></div></div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"><div class="p-6 flex-grow"><span class="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">UMKM</span><h3 class="text-xl font-bold mt-4">Digital Catalog of Melaurè</h3><p class="text-gray-600 mt-2">Katalog produk sabun Melaurè untuk pemasaran digital.</p></div><div class="p-6 bg-gray-50 border-t"><p class="text-sm text-gray-500 mb-4">Oleh: Belinda, Lala, Safira, Sabila</p><a href="#" class="w-full text-center block bg-[#65B741] text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">Lihat Karya</a></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Edukasi Section -->
+        <section id="edukasi" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#F28500]">Pojok Edukasi</h2>
+                    <p class="text-lg text-[#3C3C3C] mt-2">Materi edukatif untuk kemajuan masyarakat Desa Kaliprau.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"><div class="p-6 flex-grow"><span class="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">UMKM</span><h3 class="text-xl font-bold mt-4">Digital Marketing</h3><p class="text-gray-600 mt-2">Modul panduan pemasaran digital untuk UMKM desa.</p></div><div class="p-6 bg-gray-50 border-t"><p class="text-sm text-gray-500 mb-4">Oleh: Arul dan Abdul</p><a href="#" target="_blank" class="w-full text-center block bg-[#65B741] text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">Lihat Karya</a></div></div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"><div class="p-6 flex-grow"><span class="text-xs font-semibold bg-purple-100 text-purple-800 px-2 py-1 rounded-full">Kesehatan</span><h3 class="text-xl font-bold mt-4">Edukasi Kesehatan Mental</h3><p class="text-gray-600 mt-2">Poster infografis untuk meningkatkan kesadaran akan kesehatan mental.</p></div><div class="p-6 bg-gray-50 border-t"><p class="text-sm text-gray-500 mb-4">Oleh: Fannia</p><a href="#" target="_blank" class="w-full text-center block bg-[#65B741] text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">Lihat Karya</a></div></div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"><div class="p-6 flex-grow"><span class="text-xs font-semibold bg-pink-100 text-pink-800 px-2 py-1 rounded-full">Sosial</span><h3 class="text-xl font-bold mt-4">Stop! Pergaulan Bebas</h3><p class="text-gray-600 mt-2">Penyuluhan dan informasi tentang bahaya pergaulan bebas.</p></div><div class="p-6 bg-gray-50 border-t"><p class="text-sm text-gray-500 mb-4">Oleh: Azalia dan Jendra</p><a href="https://www.canva.com/design/DAGtJlkLXxo/xHr3mumjzkafDScIrkl3-A/edit?utm_content=DAGtJlkLXxo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="w-full text-center block bg-[#65B741] text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">Lihat Karya</a></div></div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"><div class="p-6 flex-grow"><span class="text-xs font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Lingkungan</span><h3 class="text-xl font-bold mt-4">Dampak Pembakaran Sampah</h3><p class="text-gray-600 mt-2">Informasi mengenai dampak negatif pembakaran sampah terhadap lingkungan dan kesehatan.</p></div><div class="p-6 bg-gray-50 border-t"><p class="text-sm text-gray-500 mb-4">Oleh: Sherly</p><a href="#" target="_blank" class="w-full text-center block bg-[#65B741] text-white font-semibold py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">Lihat Karya</a></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cegah Stunting Section -->
+        <section id="stunting" class="py-20 bg-[#F5F5DC]">
+            <div class="container mx-auto px-6">
+                <div class="bg-white rounded-lg shadow-lg p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+                    <div class="md:w-2/3 text-center md:text-left">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#F28500]">Bersama Cegah Stunting</h2>
+                        <p class="text-lg text-[#3C3C3C] mt-4">Gunakan alat skrining sederhana kami untuk memantau pertumbuhan anak Anda. Deteksi dini adalah kunci untuk generasi masa depan yang sehat dan cerdas.</p>
+                        <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                            <a href="https://kalkulator-stunting-kaliprau.netlify.app" target="_blank" class="w-full sm:w-auto block text-center bg-[#F28500] text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-opacity-90 transition-all duration-300">Buka Kalkulator Gizi</a>
+                             <a href="https://heyzine.com/flip-book/bd8b7bfbd3.html" target="_blank" class="w-full sm:w-auto block text-center bg-gray-100 text-[#3C3C3C] font-bold py-3 px-6 rounded-lg text-lg hover:bg-gray-200 transition-all duration-300">Baca Buku Saku</a>
+                        </div>
+                    </div>
+                    <div class="md:w-1/3 w-full hidden md:block"><i data-lucide="heart-pulse" class="h-48 w-48 mx-auto text-red-400 opacity-50"></i></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Jumlah Penduduk -->
+    <div id="jumlah-penduduk-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden modal-overlay p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 relative modal-content w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
+            <button id="close-jumlah-penduduk-modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+                <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+            <div id="jumlah-penduduk-modal-content" class="p-6">
+                <!-- Konten Jumlah Penduduk (dari jumlah_penduduk.html) akan langsung ada di sini -->
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-f28500">Jumlah Penduduk Desa Kaliprau</h2>
+
+                <!-- Bagian Infografis seperti di gambar -->
+                <div class="gradient-green-dark text-white rounded-lg p-6 mb-8 shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Komposisi Penduduk Berdasarkan Gender</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="users" class="h-12 w-12 mb-2 text-white"></i>
+                            <p class="text-3xl font-bold">8715</p>
+                            <p class="text-sm">Total Penduduk</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="user" class="h-12 w-12 mb-2 text-white"></i>
+                            <p class="text-3xl font-bold">4353</p>
+                            <p class="text-sm">Laki-laki</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="user" class="h-12 w-12 mb-2 text-white"></i>
+                            <p class="text-3xl font-bold">4362</p>
+                            <p class="text-sm">Perempuan</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="home" class="h-12 w-12 mb-2 text-white"></i>
+                            <p class="text-3xl font-bold">1662</p>
+                            <p class="text-sm">Kepala Keluarga</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bagian Detail Tekstual -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-65b741">Detail Data Penduduk:</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2">
+                        <li>Jumlah Penduduk: 8.715</li>
+                        <li>Laki-Laki: 4.353 Orang</li>
+                        <li>Perempuan: 4.362 Orang</li>
+                        <li>Kepala Keluarga: 1.662 KK</li>
+                    </ul>
+                    <p class="text-sm text-gray-500 mt-4">Data berdasarkan sensus terakhir.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Luas Wilayah -->
+    <div id="luas-wilayah-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden modal-overlay p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 relative modal-content w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
+            <button id="close-luas-wilayah-modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+                <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+            <div id="luas-wilayah-modal-content" class="p-6">
+                <!-- Konten Luas Wilayah akan ada di sini -->
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-f28500">Geografi & Luas Wilayah Desa Kaliprau</h2>
+
+                <!-- Bagian Infografis/Highlight Luas Wilayah -->
+                <div class="gradient-orange-light text-white rounded-lg p-6 mb-8 shadow-lg text-center">
+                    <i data-lucide="map" class="h-16 w-16 mb-4 text-white mx-auto"></i>
+                    <p class="text-4xl font-bold">631,66 ha</p>
+                    <p class="text-lg">Luas Wilayah Desa Kaliprau</p>
+                </div>
+
+                <!-- Bagian Detail Tekstual -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-65b741">Batas-batas Wilayah Desa Kaliprau:</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                        <li>Sebelah Utara: Laut Jawa</li>
+                        <li>Sebelah Selatan: Desa Wiyorowetan dan Desa Bumirejo</li>
+                        <li>Sebelah Barat: Desa Kertosari</li>
+                        <li>Sebelah Timur: Desa Tasikrejo</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed">
+                        Desa Kaliprau tergolong sebagai wilayah pesisir yang memiliki akses langsung terhadap berbagai ekosistem: pantai (pasir atau berbatu), mangrove, estuaria, serta ekosistem terumbu karang. Umumnya setiap wilayah yang ada di dalam Desa Kaliprau memiliki ketinggian yang bervariasi yaitu antara 0-1.000 m di atas permukaan laut, karena berada di jalur pesisir pantai utara.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal RT/RW -->
+    <div id="rt-rw-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden modal-overlay p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 relative modal-content w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
+            <button id="close-rt-rw-modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+                <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+            <div id="rt-rw-modal-content" class="p-6">
+                <!-- Konten RT/RW akan ada di sini -->
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-f28500">Jumlah RT & RW Desa Kaliprau</h2>
+
+                <!-- Bagian Detail RT/RW per Dusun -->
+                <div class="gradient-blue-dark text-white rounded-lg p-6 mb-8 shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Rincian RT & RW per Dusun</h3>
+                    <ul class="list-none space-y-3 text-lg">
+                        <li class="flex justify-between items-center">
+                            <span>Dusun 1:</span>
+                            <span class="font-bold">8 RT, 2 RW</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span>Dusun 2:</span>
+                            <span class="font-bold">9 RT, 2 RW</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span>Dusun 3:</span>
+                            <span class="font-bold">8 RT, 2 RW</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span>Dusun 4:</span>
+                            <span class="font-bold">8 RT, 2 RW</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Bagian Tambahan Informasi (opsional) -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-65b741">Pentingnya RT dan RW:</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Rukun Tetangga (RT) dan Rukun Warga (RW) adalah lembaga kemasyarakatan yang dibentuk untuk membantu pelayanan pemerintahan desa kepada masyarakat, serta menjadi wadah partisipasi masyarakat dalam pembangunan. Mereka berperan penting dalam menjaga kerukunan dan ketertiban lingkungan.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Footer -->
+    <footer id="kontak" class="bg-[#3C3C3C] text-white">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Desa Kaliprau</h3>
+                    <p class="text-gray-300">Jasmine Village<br>Kecamatan Ulujami, Kabupaten Pemalang<br>Jawa Tengah</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Tautan Penting</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#profil" class="text-gray-300 hover:text-white">Profil Desa</a></li>
+                        <li><a href="#pemerintahan" class="text-gray-300 hover:text-white">Pemerintahan</a></li>
+                        <li><a href="#potensi-produk" class="text-gray-300 hover:text-white">Potensi & Produk</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-[#F28500]">Ikuti Kami</h3>
+                    <div class="flex justify-center md:justify-start space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="instagram" class="h-6 w-6"></i></a>
+                        <a href="https://www.facebook.com/desakaliprau/?locale=id_ID" target="_blank" class="text-gray-300 hover:text-white"><i data-lucide="facebook" class="h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i data-lucide="youtube" class="h-6 w-6"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Desa Kaliprau. Didukung oleh Tim KKN Undip.</p>
+            </div>
+        </div>
+    </footer>
+
+   <script>
+        // Inisialisasi Lucide Icons
+        lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inisialisasi Swiper.js untuk slider hero
+            var heroSwiper = new Swiper('.hero-swiper', {
+                loop: true,
+                effect: 'fade',
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+
+            // Fungsionalitas untuk Menu Mobile
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Fungsionalitas untuk menggulir ke hash saat halaman dimuat (dari halaman lain)
+            if (window.location.hash) {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            // Fungsionalitas Modal Jumlah Penduduk
+            const jumlahPendudukCard = document.getElementById('jumlah-penduduk-card');
+            const jumlahPendudukModal = document.getElementById('jumlah-penduduk-modal');
+            const closeJumlahPendudukModalButton = document.getElementById('close-jumlah-penduduk-modal');
+
+            jumlahPendudukCard.addEventListener('click', () => {
+                jumlahPendudukModal.classList.remove('hidden');
+                lucide.createIcons(); 
+            });
+
+            closeJumlahPendudukModalButton.addEventListener('click', () => {
+                jumlahPendudukModal.classList.add('hidden');
+            });
+
+            jumlahPendudukModal.addEventListener('click', (e) => {
+                if (e.target === jumlahPendudukModal) {
+                    jumlahPendudukModal.classList.add('hidden');
+                }
+            });
+
+            // Fungsionalitas Modal Luas Wilayah
+            const luasWilayahCard = document.getElementById('luas-wilayah-card');
+            const luasWilayahModal = document.getElementById('luas-wilayah-modal');
+            const closeLuasWilayahModalButton = document.getElementById('close-luas-wilayah-modal');
+
+            luasWilayahCard.addEventListener('click', () => {
+                luasWilayahModal.classList.remove('hidden');
+                lucide.createIcons(); 
+            });
+
+            closeLuasWilayahModalButton.addEventListener('click', () => {
+                luasWilayahModal.classList.add('hidden');
+            });
+
+            luasWilayahModal.addEventListener('click', (e) => {
+                if (e.target === luasWilayahModal) {
+                    luasWilayahModal.classList.add('hidden');
+                }
+            });
+
+            // Fungsionalitas Modal RT/RW
+            const rtRwCard = document.getElementById('rt-rw-card');
+            const rtRwModal = document.getElementById('rt-rw-modal');
+            const closeRtRwModalButton = document.getElementById('close-rt-rw-modal');
+
+            rtRwCard.addEventListener('click', () => {
+                rtRwModal.classList.remove('hidden');
+                lucide.createIcons(); 
+            });
+
+            closeRtRwModalButton.addEventListener('click', () => {
+                rtRwModal.classList.add('hidden');
+            });
+
+            rtRwModal.addEventListener('click', (e) => {
+                if (e.target === rtRwModal) {
+                    rtRwModal.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
